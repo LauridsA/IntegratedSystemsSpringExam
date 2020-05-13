@@ -20,7 +20,7 @@ spec:
   selector:
     matchLabels:
       app: entrypoint-service
-  replicas: 1
+  replicas: 2
   template:
     metadata:
       labels:
@@ -51,6 +51,6 @@ spec:
       containers:
       - name: dependent-service
         image: docker.io/lauridsand/dependent-service:latest
-        imagePullPolicy: Never
+        imagePullPolicy: Always
         ports:
         - containerPort: 5001
