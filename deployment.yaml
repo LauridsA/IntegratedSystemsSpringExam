@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: hello-python-service
+  name: is-exam-service
 spec:
   selector:
-    app: hello-python
+    app: entrypoint-service
   ports:
   - protocol: "TCP"
     port: 6000
@@ -15,42 +15,42 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-python
+  name: entrypoint-service
 spec:
   selector:
     matchLabels:
-      app: hello-python
+      app: entrypoint-service
   replicas: 1
   template:
     metadata:
       labels:
-        app: hello-python
+        app: entrypoint-service
     spec:
       containers:
-      - name: hello-python
-        image: hello-python:latest
-        imagePullPolicy: Never
+      - name: entrypoint-service
+        image: docker.io/lauridsand/entrypoint-service:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 5000
 
-# ---
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: hello-python
-# spec:
-#   selector:
-#     matchLabels:
-#       app: hello-python
-#   replicas: 1
-#   template:
-#     metadata:
-#       labels:
-#         app: hello-python
-#     spec:
-#       containers:
-#       - name: hello-python
-#         image: hello-python:latest
-#         imagePullPolicy: Never
-#         ports:
-#         - containerPort: 5000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dependent-service
+spec:
+  selector:
+    matchLabels:
+      app: dependent-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: dependent-service
+    spec:
+      containers:
+      - name: dependent-service
+        image: docker.io/lauridsand/dependent-service:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5001
