@@ -1,10 +1,9 @@
-FROM python:3
+FROM python:3.7
 
-WORKDIR /usr/src/app
+RUN mkdir /app
+WORKDIR /app
+ADD . /app/
+RUN pip install -r requirements.txt
 
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY . .
-
-CMD [ "python", "./main.py" ]
+EXPOSE 5001
+CMD ["python", "/app/main.py"]

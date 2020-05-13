@@ -1,31 +1,19 @@
-import win32serviceutil
-import win32service
-import win32event
-import servicemanager
-import socket
+from flask import Flask
+app = Flask(__name__)
+from Controller import MainEntryController as controller
+from Proxy import DependentServiceProxy as proxy
 
+@app.route('/')
+def index():
+    return 'Index Page'
 
-class AppServerSvc (win32serviceutil.ServiceFramework):
-    _svc_name_ = "TestService"
-    _svc_display_name_ = "Test Service"
+@app.route('/hello')
+def hello():
+    return controller.SomeFunction()
 
-    def __init__(self,args):
-        win32serviceutil.ServiceFramework.__init__(self,args)
-        self.hWaitStop = win32event.CreateEvent(None,0,0,None)
-        socket.setdefaulttimeout(60)
+@app.route('/proxy')
+def getProxy():
+    return proxy.getProxyDetails()
 
-    def SvcStop(self):
-        self.ReportServiceStatus(win32service.SERVICE_STOP_PENDING)
-        win32event.SetEvent(self.hWaitStop)
-
-    def SvcDoRun(self):
-        servicemanager.LogMsg(servicemanager.EVENTLOG_INFORMATION_TYPE,
-                              servicemanager.PYS_SERVICE_STARTED,
-                              (self._svc_name_,''))
-        self.main()
-
-    def main(self):
-        pass
-
-if __name__ == '__main__':
-    win32serviceutil.HandleCommandLine(AppServerSvc)
+if __name__ == "__main__":
+    app.run(host='0.0.0.0')
