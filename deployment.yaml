@@ -1,56 +1,205 @@
-apiVersion: v1
-kind: Service
+apiVersion: extensions/v1beta1
+kind: Ingress
 metadata:
-  name: is-exam-service
+  name: is-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: \"false\"
 spec:
-  selector:
-    app: entrypoint-service
-  ports:
-  - protocol: "TCP"
-    port: 6000
-    targetPort: 5000
-  type: LoadBalancer
-
+  rules:
+  - http:
+      paths:
+        - path: /
+          backend:
+            serviceName: entrypoint-service
+            servicePort: 80
 ---
+
+### entrypoint
 apiVersion: apps/v1
 kind: Deployment
+metadata:
+  name: entrypoint
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: entrypoint
+  template:
+    metadata:
+      labels:
+        app: entrypoint
+    spec:
+      containers:
+      - name: entrypoint
+        image: docker.io/lauridsand/entrypoint-service:latest
+        ports:
+        - containerPort: 8080
+---
+
+kind: Service
+apiVersion: v1
 metadata:
   name: entrypoint-service
 spec:
   selector:
+    app: entrypoint
+    ports:
+      - port: 80
+        targetPort: 8080
+        protocol: TCP
+        name: http
+      selector:
+        app: entrypoint
+---
+
+### dependent
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dependent
+spec:
+  replicas: 1
+  selector:
     matchLabels:
-      app: entrypoint-service
-  replicas: 2
+      app: dependent
   template:
     metadata:
       labels:
-        app: entrypoint-service
+        app: dependent
     spec:
       containers:
-      - name: entrypoint-service
-        image: docker.io/lauridsand/entrypoint-service:latest
-        imagePullPolicy: Always
+      - name: dependent
+        image: docker.io/lauridsand/dependent-service:latest
         ports:
-        - containerPort: 5000
-
+        - containerPort: 8080
 ---
-apiVersion: apps/v1
-kind: Deployment
+
+kind: Service
+apiVersion: v1
 metadata:
   name: dependent-service
 spec:
   selector:
-    matchLabels:
-      app: dependent-service
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: dependent-service
-    spec:
-      containers:
-      - name: dependent-service
-        image: docker.io/lauridsand/dependent-service:latest
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 5001
+    app: dependent
+  ports:
+    - port: 80
+
+
+
+
+
+
+#### LEGACY ###
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: nginx-ingress-service
+#   labels:
+#     name: ingress-nginx-service
+# spec:
+#   type: LoadBalancer
+#   ports:
+#     - name: http
+#       port: 8080
+#       targetPort: 5000
+#       protocol: TCP
+#   selector:
+#     app.kubernetes.io/name: ingress-nginx
+#     app.kubernetes.io/part-of: ingress-nginx
+
+# ---
+
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: is-exam-service
+# spec:
+#   selector:
+#     app: entrypoint-service
+#   ports:
+#   - protocol: "TCP"
+#     port: 6000
+#     targetPort: 5000
+#   type: LoadBalancer
+
+# ---
+
+# apiVersion: extensions/v1beta1
+# kind: Ingress
+# metadata:
+#   name: is-exam-ingress
+#   annotations:
+#     kubernetes.io/ingress.class: addon-http-application-routing
+# spec:
+#   rules:
+#   - host: kubernetes-demo.nothing.tk
+#     http:
+#       paths:
+#       - backend:
+#           serviceName: entrypoint-service
+#           servicePort: 80
+#         path: /
+# ---
+
+# apiVersion: networking.k8s.io/v1beta1
+# kind: Ingress
+# metadata:
+#   name: is-exam-ingress
+#   # annotations:
+#   #   kubernetes.io/ingress.class: "ingress-nginx"
+# spec:
+#   rules:
+#   - http:
+#       paths:
+#       - path: /
+#         backend:
+#           serviceName: entrypoint-service
+#           servicePort: 5000
+
+# ---
+
+
+##### SERVICES ####
+
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: entrypoint-service
+# spec:
+#   selector:
+#     matchLabels:
+#       app: entrypoint-service
+#   replicas: 1
+#   template:
+#     metadata:
+#       labels:
+#         app: entrypoint-service
+#     spec:
+#       containers:
+#       - name: entrypoint-service
+#         image: docker.io/lauridsand/entrypoint-service:latest
+#         imagePullPolicy: Always
+#         ports:
+#         - containerPort: 5000
+
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: dependent-service
+# spec:
+#   selector:
+#     matchLabels:
+#       app: dependent-service
+#   replicas: 1
+#   template:
+#     metadata:
+#       labels:
+#         app: dependent-service
+#     spec:
+#       containers:
+#       - name: dependent-service
+#         image: docker.io/lauridsand/dependent-service:latest
+#         imagePullPolicy: Always
+#         ports:
+#         - containerPort: 5001
