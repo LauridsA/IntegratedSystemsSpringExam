@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
       - name: entrypoint
-        image: gcr.io/kubernetes-e2e-test-images/echoserver:2.1
+        image: docker.io/lauridsand/entrypoint-service:latest
         ports:
         - containerPort: 8080
 " | kubectl apply -f -
@@ -69,7 +69,7 @@ spec:
     spec:
       containers:
       - name: dependent
-        image: gcr.io/kubernetes-e2e-test-images/echoserver:2.1
+        image: docker.io/lauridsand/dependent-service:latest
         ports:
         - containerPort: 3001
 " | kubectl apply -f -
