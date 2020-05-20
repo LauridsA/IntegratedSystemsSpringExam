@@ -10,17 +10,6 @@ kubectl delete service dependent-service entrypoint-service
 kubectl delete deployment dependent entrypoint
 #cleanup externals
 
-#docker login
-cat ~/Dockerlogin/password.txt | docker login --username lauridsand --password-stdin
-#build images
-docker build -f ../DependentService/Dockerfile -t lauridsand/entrypoint-service:latest ../DependentService/
-docker build -f ../EntrypointService/Dockerfile -t lauridsand/dependent-service:latest ../EntrypointService/
-#push it to the registry
-docker push lauridsand/entrypoint-service:latest
-docker push lauridsand/dependent-service:latest
-
-# apply the remainder (services)
-
 ## entrypoint service ## 
 echo "entrypoint deployment + service"
 echo "
@@ -40,7 +29,7 @@ spec:
     spec:
       containers:
       - name: entrypoint
-        image: docker.io/lauridsand/entrypoint-service:latest
+        image: gcr.io/kubernetes-e2e-test-images/echoserver:2.1
         ports:
         - containerPort: 8080
 " | kubectl apply -f -
@@ -80,7 +69,7 @@ spec:
     spec:
       containers:
       - name: dependent
-        image: docker.io/lauridsand/dependent-service:latest
+        image: gcr.io/kubernetes-e2e-test-images/echoserver:2.1
         ports:
         - containerPort: 3001
 " | kubectl apply -f -
