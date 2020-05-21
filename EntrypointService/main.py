@@ -5,6 +5,7 @@ from Proxy import DependentServiceProxy as proxy
 
 @app.route('/')
 def index():
+    print('testing')
     return 'Index Page'
 
 @app.route('/hello')
@@ -16,4 +17,4 @@ def getProxy():
     return proxy.getProxyDetails()
 
 if __name__ == "__main__":
-    app.run(host='127.0.0.1')
+    app.run(host='0.0.0.0', port=8080)
