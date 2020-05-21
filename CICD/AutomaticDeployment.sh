@@ -8,10 +8,29 @@
 #cleanup from previous deployments etc
 kubectl delete service dependent-service entrypoint-service
 kubectl delete deployment dependent entrypoint
-#cleanup externals
+kubectl delete ingress is-ingress
+
+## Ingress ##
+echo "####ingress deployment####"
+echo "
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: is-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: \"false\"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        backend:
+          serviceName: entrypoint-service
+          servicePort: 80
+" | kubectl apply -f -
 
 ## entrypoint service ## 
-echo "entrypoint deployment + service"
+echo "####entrypoint deployment + service####"
 echo "
 apiVersion: apps/v1
 kind: Deployment
@@ -30,6 +49,7 @@ spec:
       containers:
       - name: entrypoint
         image: docker.io/lauridsand/entrypoint-service:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
 " | kubectl apply -f -
@@ -39,6 +59,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: entrypoint-service
+  namespace: default
 spec:
   ports:
   - port: 80
@@ -50,7 +71,7 @@ spec:
 " | kubectl apply -f -
 
 ## dependent service ##
-echo "dependent deployment + service"
+echo "####dependent deployment + service####"
 
 echo "
 apiVersion: apps/v1
@@ -70,6 +91,7 @@ spec:
       containers:
       - name: dependent
         image: docker.io/lauridsand/dependent-service:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 3001
 " | kubectl apply -f -
