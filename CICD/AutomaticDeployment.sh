@@ -97,7 +97,7 @@ spec:
         image: docker.io/lauridsand/dependent-service:latest
         imagePullPolicy: Always
         ports:
-        - containerPort: 3001
+        - containerPort: 8080
 " | kubectl apply -f -
 
 
@@ -109,7 +109,7 @@ metadata:
 spec:
   ports:
   - port: 80
-    targetPort: 3001
+    targetPort: 8080
     protocol: TCP
     name: http
   selector:
