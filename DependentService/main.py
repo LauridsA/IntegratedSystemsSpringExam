@@ -1,7 +1,7 @@
 from flask import Flask
 app = Flask(__name__)
 
-@app.route("/dependentservice")
+@app.route("/dependentservice/getPrimeNumbers")
 def hello():
     print('testing2')
     return "Hello from Python!"
