@@ -5,5 +5,5 @@ def CalculatePrimeNumber(fromValue, toValue):
             if (num % i) == 0:  
                 break  
         else:  
-            res.append(num) 
+            res.append(str(num)) 
     return res
