@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 app = Flask(__name__)
 from Controller import MainDependentController as controller
 
@@ -7,7 +7,7 @@ def hello():
     fromparam = request.form['from']
     toparam = request.form['to']
     res = controller.CalculatePrimeNumber(fromparam, toparam)
-    return res
+    return jsonify(res)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080)
