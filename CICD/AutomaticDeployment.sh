@@ -27,6 +27,10 @@ spec:
         backend:
           serviceName: entrypoint-service
           servicePort: 80
+      - path: /dependentservice
+        backend:
+          serviceName: dependent-service
+          servicePort: 80
 " | kubectl apply -f -
 
 ## entrypoint service ## 

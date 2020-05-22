@@ -1,20 +1,14 @@
 from flask import Flask
 app = Flask(__name__)
 from Controller import MainEntryController as controller
-from Proxy import DependentServiceProxy as proxy
 
 @app.route('/')
 def index():
-    print('testing')
-    return 'Index Page'
+    return 'Health Check'
 
 @app.route('/hello')
-def hello():
-    return controller.SomeFunction()
-
-@app.route('/proxy')
-def getProxy():
-    return proxy.getProxyDetails()
+def getPrimeNumber():
+    return controller.GetPrimeNumber()
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=8080)
+    app.run(host='127.0.0.1', port=8080) #dont forget to flip IP to 0.0.0.0
