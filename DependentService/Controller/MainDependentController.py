@@ -1,4 +1,4 @@
-def CalculatePrimeNumber(self, fromValue, toValue):
+def CalculatePrimeNumber(fromValue, toValue):
     res = []
     for num in range(fromValue,toValue + 1):  
         for i in range(2,num):  
