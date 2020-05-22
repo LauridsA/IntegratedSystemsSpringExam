@@ -19,6 +19,7 @@ metadata:
   name: is-ingress
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: \"false\"
+    ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
   - http:

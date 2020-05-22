@@ -1,7 +1,7 @@
 from flask import Flask
 app = Flask(__name__)
 
-@app.route("/")
+@app.route("/dependentservice")
 def hello():
     print('testing2')
     return "Hello from Python!"
