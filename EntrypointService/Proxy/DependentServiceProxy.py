@@ -1,6 +1,6 @@
 import requests
 class DependentServiceProxy:
-    ingress_ip = 'http://192.168.90.100'
+    ingress_ip = 'http://192.168.99.100'
     service_port = ':80'
     def getPrimeNumbers(self, lower, upper):
         localPath = '/dependentservice/getPrimeNumbers'
